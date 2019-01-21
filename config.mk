@@ -75,4 +75,5 @@ LDFLAGS := \
   -arch x86_64 \
   -framework Hypervisor \
   -framework vmnet \
+  -lz \
   $(LDFLAGS_DBG)

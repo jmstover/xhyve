@@ -33,7 +33,7 @@
 #include <errno.h>
 #include <pthread.h>
 #include <assert.h>
-#include <libkern/OSAtomic.h>
+#include <xhyve/lock.h>
 #include <xhyve/support/misc.h>
 #include <xhyve/support/atomic.h>
 #include <xhyve/support/cpuset.h>
@@ -69,7 +69,7 @@ struct vlapic;
  * (x) initialized before use
  */
 struct vcpu {
-	OSSpinLock lock; /* (o) protects 'state' */
+	xhyve_lock_t lock; /* (o) protects 'state' */
 	pthread_mutex_t state_sleep_mtx;
 	pthread_cond_t state_sleep_cnd;
 	pthread_mutex_t vcpu_sleep_mtx;
@@ -90,9 +90,9 @@ struct vcpu {
 	uint64_t nextrip; /* (x) next instruction to execute */
 };
 
-#define vcpu_lock_init(v) (v)->lock = OS_SPINLOCK_INIT;
-#define vcpu_lock(v) OSSpinLockLock(&(v)->lock)
-#define vcpu_unlock(v) OSSpinLockUnlock(&(v)->lock)
+#define vcpu_lock_init(v) XHYVE_LOCK_INIT(v, lock)
+#define vcpu_lock(v) XHYVE_LOCK(v, lock)
+#define vcpu_unlock(v) XHYVE_UNLOCK(v, lock)
 
 struct mem_seg {
 	uint64_t gpa;
@@ -100,7 +100,7 @@ struct mem_seg {
 	void *object;
 };
 
-#define	VM_MAX_MEMORY_SEGMENTS	2
+#define	VM_MAX_MEMORY_SEGMENTS	4
 
 /*
  * Initialization:
@@ -428,7 +428,7 @@ vm_mem_allocated(struct vm *vm, uint64_t gpa)
 }
 
 int
-vm_malloc(struct vm *vm, uint64_t gpa, size_t len)
+vm_malloc(struct vm *vm, uint64_t gpa, size_t len, uint64_t prot)
 {
 	int available, allocated;
 	struct mem_seg *seg;
@@ -468,7 +468,7 @@ vm_malloc(struct vm *vm, uint64_t gpa, size_t len)
 
 	seg = &vm->mem_segs[vm->num_mem_segs];
 
-	if ((object = vmm_mem_alloc(gpa, len)) == NULL)
+	if ((object = vmm_mem_alloc(gpa, len, prot)) == NULL)
 		return (ENOMEM);
 
 	seg->gpa = gpa;
