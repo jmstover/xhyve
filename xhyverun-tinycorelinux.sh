@@ -1,6 +1,8 @@
 #!/bin/sh
 
-build/Release/xhyve \
+PATH="build/Release:build:$PATH"
+
+xhyve \
     -A \
     -m 1G \
     -s 0:0,hostbridge \
