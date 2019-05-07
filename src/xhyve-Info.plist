@@ -4,15 +4,15 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>xhyve</string>
 	<key>CFBundleIdentifier</key>
-	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<string>io.sylabs.xhyve</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleShortVersionString</key>
-	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
+	<string>0.2.0</string>
 	<key>CFBundleVersion</key>
-	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<string>0.2.0-sylabs</string>
 </dict>
 </plist>
