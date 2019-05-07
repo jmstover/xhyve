@@ -18,6 +18,7 @@ AS := clang
 LD := clang
 STRIP := strip
 DSYM := dsymutil
+INFOPLIST_FILE := src/xhyve-Info.plist
 
 ENV := \
   LANG=en_US.US-ASCII
@@ -76,4 +77,5 @@ LDFLAGS := \
   -framework Hypervisor \
   -framework vmnet \
   -lz \
+  -sectcreate __TEXT __info_plist $(INFOPLIST_FILE) \
   $(LDFLAGS_DBG)
